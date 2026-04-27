@@ -12,9 +12,11 @@ import {
 } from "@chakra-ui/react";
 // Custom components
 import { DeliveryLogo } from "components/icons/Icons";
+import { useAppData } from 'contexts/AppDataContext';
 
 export default function LandingNavbar(props) {
   const { logoText } = props;
+  const { state } = useAppData();
   const textColor = useColorModeValue("navy.700", "white");
   const logoColor = useColorModeValue("navy.700", "white");
   const navbarBg = useColorModeValue("rgba(255, 255, 255, 0.7)", "rgba(11, 20, 55, 0.5)");
@@ -66,30 +68,53 @@ export default function LandingNavbar(props) {
               Impact
             </Text>
           </Link>
-          <NavLink to='/auth/login'>
-            <Text color={textColor} fontSize='sm' fontWeight='600'>
-              Sign In
-            </Text>
-          </NavLink>
-          <NavLink to='/auth/register'>
-            <Button
-              bg='brand.500'
-              color='white'
-              fontSize='xs'
-              variant='no-effects'
-              borderRadius='15px'
-              px='30px'
-              _hover={{ bg: 'brand.600' }}>
-              Get Started
-            </Button>
-          </NavLink>
+          {state.currentUser ? (
+            <NavLink to={`/${state.currentUser.role}/dashboard`}>
+              <Button
+                bg='brand.500'
+                color='white'
+                fontSize='xs'
+                variant='no-effects'
+                borderRadius='15px'
+                px='30px'
+                _hover={{ bg: 'brand.600' }}>
+                Go to Dashboard
+              </Button>
+            </NavLink>
+          ) : (
+            <>
+              <NavLink to='/auth/login'>
+                <Text color={textColor} fontSize='sm' fontWeight='600'>
+                  Sign In
+                </Text>
+              </NavLink>
+              <NavLink to='/auth/register'>
+                <Button
+                  bg='brand.500'
+                  color='white'
+                  fontSize='xs'
+                  variant='no-effects'
+                  borderRadius='15px'
+                  px='30px'
+                  _hover={{ bg: 'brand.600' }}>
+                  Get Started
+                </Button>
+              </NavLink>
+            </>
+          )}
         </HStack>
         
         {/* Mobile View */}
         <Box display={{ base: "flex", lg: "none" }}>
-            <NavLink to='/auth/login'>
-                <Button size='sm' variant='brand'>Login</Button>
-            </NavLink>
+            {state.currentUser ? (
+              <NavLink to={`/${state.currentUser.role}/dashboard`}>
+                  <Button size='sm' variant='brand'>Dashboard</Button>
+              </NavLink>
+            ) : (
+              <NavLink to='/auth/login'>
+                  <Button size='sm' variant='brand'>Login</Button>
+              </NavLink>
+            )}
         </Box>
       </Flex>
     </Flex>

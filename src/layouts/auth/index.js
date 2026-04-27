@@ -7,11 +7,20 @@ import { Box, useColorModeValue } from '@chakra-ui/react';
 
 // Layout components
 import { SidebarContext } from 'contexts/SidebarContext';
+import { useAppData } from 'contexts/AppDataContext';
 
 // Custom Chakra theme
 export default function Auth() {
   // states and functions
   const [toggleSidebar, setToggleSidebar] = useState(false);
+  const { state } = useAppData();
+  const authBg = useColorModeValue('white', 'navy.900');
+
+  // If user is already logged in, redirect them to their dashboard
+  if (state.currentUser) {
+    return <Navigate to={`/${state.currentUser.role}/dashboard`} replace />;
+  }
+
   // functions for changing the states from components
   const getRoute = () => {
     return window.location.pathname !== '/auth/full-screen-maps';
@@ -30,7 +39,6 @@ export default function Auth() {
       }
     });
   };
-  const authBg = useColorModeValue('white', 'navy.900');
   document.documentElement.dir = 'ltr';
   return (
     <Box>

@@ -10,6 +10,8 @@ import { AppDataProvider } from './contexts/AppDataContext';
 import { useState } from 'react';
 import initialTheme from './theme/theme';
 
+import NotFound from './views/notFound';
+
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
   
@@ -36,6 +38,9 @@ export default function Main() {
           
           {/* Landing page at root */}
           <Route path="/" element={<LandingPage />} />
+
+          {/* 404 Not Found */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </ChakraProvider>
     </AppDataProvider>
