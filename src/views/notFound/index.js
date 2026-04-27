@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Flex, Heading, Text, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text, Button, useColorModeValue, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import notFoundImg from 'assets/img/landing/notfound.png';
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -17,6 +18,15 @@ export default function NotFound() {
       bg={useColorModeValue('secondaryGray.300', 'navy.900')}
     >
       <Box textAlign="center" px={6}>
+        <Image 
+          src={notFoundImg} 
+          alt="404 Not Found" 
+          maxW="300px" 
+          mx="auto" 
+          mb={8} 
+          borderRadius="30px"
+          boxShadow="0 20px 40px rgba(0,0,0,0.2)"
+        />
         <Heading
           display="inline-block"
           as="h1"

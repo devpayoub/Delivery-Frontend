@@ -28,6 +28,8 @@ import {
   MdDashboard
 } from 'react-icons/md';
 import LandingNavbar from 'components/navbar/LandingNavbar';
+import heroImage from 'assets/img/landing/hero.png';
+import cityImage from 'assets/img/landing/city.png';
 
 const MotionBox = chakra(motion.div, {
   shouldForwardProp: (prop) => isValidMotionProp(prop) || shouldForwardProp(prop),
@@ -206,7 +208,7 @@ export default function LandingPage() {
               alt={'Dashboard Preview'}
               borderRadius="30px"
               boxShadow="0 50px 100px rgba(0,0,0,0.2)"
-              src={'https://images.unsplash.com/photo-1551288049-bbbda546697a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'}
+              src={heroImage}
               zIndex={1}
               position="relative"
             />
@@ -284,7 +286,7 @@ export default function LandingPage() {
               viewport={{ once: true }}
             >
               <Image 
-                src="https://images.unsplash.com/photo-1566576721346-d4a3b4eaad21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                src={cityImage} 
                 borderRadius="30px" 
                 boxShadow="xl"
               />
