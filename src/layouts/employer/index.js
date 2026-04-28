@@ -8,13 +8,19 @@ import { SidebarContext } from 'contexts/SidebarContext';
 import React, { useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import routes, { getRoutesByRole } from 'routes.js';
+import { useAppData } from 'contexts/AppDataContext';
 
 // Custom Chakra theme
 export default function Dashboard(props) {
-  const { ...rest } = props;
-  // states and functions
+  const { state } = useAppData();
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
+  const { onOpen } = useDisclosure();
+
+  if (!state.currentUser) {
+    return <Navigate to="/auth/login" replace />;
+  }
+  const { ...rest } = props;
   // functions for changing the states from components
   const getRoute = () => {
     return window.location.pathname !== '/employer/full-screen-maps';
@@ -103,8 +109,6 @@ const getRoutes = (routes) => {
       }
     });
   };
-  document.documentElement.dir = 'ltr';
-  const { onOpen } = useDisclosure();
   document.documentElement.dir = 'ltr';
   
   const employerRoutes = getRoutesByRole('employer');

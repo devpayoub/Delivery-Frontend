@@ -6,30 +6,13 @@ import cityApi from '../api/cities';
 import productTypeApi from '../api/productTypes';
 import deliveryApi from '../api/deliveries';
 import logApi from '../api/logs';
-import { setToken, getToken } from '../api/config';
+import { setUser } from '../api/config';
 
 const AppDataContext = createContext();
 
 export function useAppData() {
   return useContext(AppDataContext);
 }
-
-// Helper to decode JWT payload without verification
-const decodeToken = (token) => {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-};
 
 export function AppDataProvider({ children }) {
   const [state, setState] = useState({
@@ -44,27 +27,31 @@ export function AppDataProvider({ children }) {
     error: null
   });
 
-  // Load initial data if logged in
   useEffect(() => {
-    const token = getToken();
-    if (token) {
-      const user = decodeToken(token);
-      if (user) {
-        setState(prev => ({ ...prev, currentUser: user }));
+    const checkSession = async () => {
+      try {
+        const data = await authApi.me();
+        if (data.user) {
+          setUser(data.user);
+          setState(prev => ({ ...prev, currentUser: data.user }));
+          loadAll();
+        }
+      } catch {
+        // No valid session — stay logged out
       }
-      loadAll();
-    }
+    };
+    checkSession();
   }, []);
 
   const loadAll = async () => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const [
-        employers, 
-        drivers, 
-        cities, 
-        product_types, 
-        deliveries, 
+        employers,
+        drivers,
+        cities,
+        product_types,
+        deliveries,
         logs
       ] = await Promise.all([
         employerApi.getAll().catch(() => []),
@@ -94,8 +81,7 @@ export function AppDataProvider({ children }) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const data = await authApi.login(identifier, password);
-      // data contains { user, token }
-      setToken(data.token);
+      setUser(data.user);
       setState(prev => ({ ...prev, currentUser: data.user, isLoading: false }));
       await loadAll();
       return data.user;
@@ -105,9 +91,9 @@ export function AppDataProvider({ children }) {
     }
   };
 
-  const logout = () => {
-    authApi.logout();
-    setToken(null);
+  const logout = async () => {
+    await authApi.logout();
+    setUser(null);
     setState({
       currentUser: null,
       employers: [],
@@ -124,7 +110,7 @@ export function AppDataProvider({ children }) {
   const createEntity = async (apiModule, data) => {
     try {
       const newEntity = await apiModule.create(data);
-      await loadAll(); // Refresh all data to ensure consistency
+      await loadAll();
       return newEntity;
     } catch (err) {
       setState(prev => ({ ...prev, error: err.message }));

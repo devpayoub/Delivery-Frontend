@@ -1,30 +1,30 @@
-import { apiFetch, setToken } from './config';
+import { apiFetch } from './config';
 
 export const authApi = {
   register: async (name, email, password) => {
-    const data = await apiFetch('/auth/register', {
+    return await apiFetch('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
     });
-    if (data.token) {
-      setToken(data.token);
-    }
-    return data;
   },
 
   login: async (identifier, password) => {
-    const data = await apiFetch('/auth/login', {
+    return await apiFetch('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ identifier, password }),
     });
-    if (data.token) {
-      setToken(data.token);
-    }
-    return data;
   },
 
-  logout: () => {
-    setToken(null);
+  logout: async () => {
+    try {
+      await apiFetch('/auth/logout', { method: 'POST' });
+    } catch {
+      // Clear state even if server call fails
+    }
+  },
+
+  me: async () => {
+    return await apiFetch('/auth/me');
   },
 };
 

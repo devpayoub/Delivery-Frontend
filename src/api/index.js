@@ -1,4 +1,4 @@
-export { getToken, setToken, apiFetch } from './config';
+export { getUser, setUser, apiFetch } from './config';
 export { authApi } from './auth';
 export { employerApi } from './employers';
 export { driverApi } from './drivers';
