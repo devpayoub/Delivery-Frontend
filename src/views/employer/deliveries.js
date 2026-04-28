@@ -12,7 +12,7 @@ export default function EmployerDeliveries() {
   const { state, createEntity, updateEntity, deleteEntity, deliveryApi } = useAppData();
   const [mode, setMode] = useState('list');
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ client_name: '', phone: '', address: '', product_type_id: '', city_id: '', status: 'Pending' });
+  const [formData, setFormData] = useState({ client_name: '', phone: '', address: '', product_type_id: '', city_id: '', status: 'Pending', total_price: '' });
   const [deletingItem, setDeletingItem] = useState(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,11 +30,15 @@ export default function EmployerDeliveries() {
       header: 'CITY',
       cell: info => info.row.original.cities?.name || state.cities.find(c => c.id === info.getValue())?.name || 'N/A'
     }),
+    columnHelper.accessor('total_price', { 
+      header: 'PRICE',
+      cell: info => `$${parseFloat(info.getValue() || 0).toFixed(2)}`
+    }),
   ];
 
   const handleAdd = () => {
     setEditingId(null);
-    setFormData({ client_name: '', phone: '', address: '', product_type_id: '', city_id: '', status: 'Pending' });
+    setFormData({ client_name: '', phone: '', address: '', product_type_id: '', city_id: '', status: 'Pending', total_price: '' });
     setMode('form');
   };
 
@@ -115,6 +119,10 @@ export default function EmployerDeliveries() {
                     <option value="">Select Product Type</option>
                     {state.product_types.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </Select>
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Total Price ($)</FormLabel>
+                  <Input variant="auth" type="number" step="0.01" value={formData.total_price} onChange={(e) => setFormData({ ...formData, total_price: e.target.value })} />
                 </FormControl>
               </SimpleGrid>
               <Flex gap={4} mt='20px'>
